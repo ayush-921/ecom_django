@@ -1,0 +1,25 @@
+{% extends '../../store/base.html' %}
+{% load static %}
+{% block title %}Logged Out{% endblock  %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <div class="col-md-12">
+            <div class="login d-flex align-items-center py-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 col-lg-7  mx-auto">
+                             
+                                <h3 class="mb-2 font-weight-bold">Logged Out</h3>
+                                <p class="mb-4">You are successfully logged out. To log in again <a href = "{% url 'account:login' %}">click here</a>.</p>
+                                
+                                
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+{% endblock  %}

@@ -1,0 +1,95 @@
+{% extends '../store/base.html' %} 
+{% load static %} 
+{% block title %} User Cart Summary {% endblock %} 
+{% block content %}
+<section class="bg-light my-5">
+  <div class="container">
+    <div class="row">
+      <!-- cart -->
+      <div class="col-lg-9">
+        <div class="card border shadow-0">
+          <div class="m-4">
+            <h4 class="card-title mb-4">Your shopping cart</h4>
+            {% for item in items %}
+            <div data-index="{{ item.product.id }}" class="row gy-3 mb-4 product-item">
+              <div class="col-lg-5">
+                <div class="me-lg-5">
+                  <div class="d-flex">
+                    <img src="{{ item.product.image.url }}" class="border rounded me-3" style="width: 96px; height: 96px;" />
+                    <div class="">
+                      <a href="{{ item.product.get_absolute_url }}" class="nav-link">{{ item.product.title }}</a>
+                      <!--p class="text-muted">Yellow, Jeans</p-->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
+                <div class="">
+                  <select id = "select{{ item.product.id }}"style="width: 100px;" class="form-select me-4">
+                    <option selected>
+                      {{ item.quantity }}
+                    </option>
+                    <option value="">1</option>
+                    <option value="">2</option>
+                    <option value="">3</option>
+                    <option value="">4</option>
+                  </select>
+                </div>
+                <div class="">
+                  <text class="h6" id="totprice{{ item.product.id }}">₹{{ item.get_total }}</text> <br />
+                  <small class="text-muted text-nowrap" id = "price{{ item.product.id }}" data-index = "{{ itme.product.price }}"> ₹{{ item.product.price }} / per item </small>
+                </div>
+              </div>
+              <div class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                <div class="float-md-end">
+                  <button type="button" id="update-button" data-product="{{ item.product.id }}" data-action="add"
+                  class="btn btn-light border icon-hover-danger update-cart">
+                  <i class="fas fa-plus">1</i>
+                </button>
+                <button type="button" id="delete-button" data-product="{{ item.product.id }}" data-action = "remove"
+                  class="btn btn-light border text-danger icon-hover-danger update-cart">
+                  <i class="fas fa-minus">1</i>
+                </button>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="border-top pt-4 mx-4 mb-4">
+            <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery within 1-2 weeks</p>
+            <p class="text-muted">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+              aliquip
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- cart -->
+      <!-- summary -->
+      <div class="col-lg-3">
+        <div class="card shadow-0 border">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Total Items:</p>
+              <p class="mb-2 subtotal">{{ order.get_cart_items }}</p>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Total price:</p>
+              <p class="mb-2 fw-bold subtotal">₹{{ order.get_cart_total }}</p>
+            </div>
+
+            <div class="mt-3">
+              <a href="{% url 'usercart:checkout' %}" class="btn btn-success w-100 shadow-0 mb-2"> Make Purchase </a>
+              <a href="#" class="btn btn-light w-100 border mt-2"> Back to shop </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- summary -->
+    </div>
+  </div>
+</section>
+<!-- cart + summary -->
+{% endblock %}

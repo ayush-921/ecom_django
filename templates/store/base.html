@@ -1,0 +1,217 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %} My Shop {% endblock %}</title>
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.min.js"
+      integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+      crossorigin="anonymous"
+    ></script>
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- MDB -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css"
+      rel="stylesheet"
+    />
+    <script type = "text/javascript">
+      var user = '{{ request.user }}' 
+      function getToken(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      const csrftoken = getToken('csrftoken');
+    </script>
+  </head>
+  <body>
+    <!--header-->
+    <header>
+      <!-- Jumbotron -->
+      <div class="p-3 text-center bg-white border-bottom">
+        <div class="container">
+          <div class="row gy-3">
+            <!-- Left elements -->
+            <div class="col-lg-2 col-sm-4 col-4">
+              <a
+                href="https://mdbootstrap.com/"
+                target="_blank"
+                class="float-start"
+              >
+                <img
+                  src="https://mdbootstrap.com/img/logo/mdb-transaprent-noshadows.png"
+                  height="35"
+                />
+              </a>
+            </div>
+            <!-- Left elements -->
+
+            <!-- Center elements -->
+            <div class="order-lg-last col-lg-5 col-sm-8 col-8">
+              <div class="d-flex float-end">
+                {% if user.is_authenticated %}
+                <a
+                  href="{% url 'account:logout' %}"
+                  class="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center"
+                  target="_blank"
+                >
+                <i class="fas fa-user-alt m-1 me-md-2"></i>
+                <p class="d-none d-md-block mb-0">Sign Out</p>
+                </a>
+                {% else %}
+                <a
+                  href="{% url 'account:login' %}"
+                  class="me-1 border rounded py-1 px-3 nav-link d-flex align-items-center"
+                  target="_blank"
+                >
+                <i class="fas fa-user-alt m-1 me-md-2"></i>
+                <p class="d-none d-md-block mb-0">Sign in</p>
+                </a>
+                {% endif %}
+                {% if user.is_authenticated %}
+                  <a href="{% url 'usercart:usercart_summary' %}" class="border rounded py-1 px-3 d-flex nav-link align-items-center" target="_self">
+                    <div>{{ cartItems }}</div>
+                    <i class="fas fa-shopping-cart m-1 me-md-2"></i>
+                    <p class="d-none d-md-block mb-0">My cart</p>
+                  </a>
+                {% else %}
+                  <a href="{% url 'cart:cart_summary' %}" class="border rounded py-1 px-3 d-flex nav-link align-items-center" target="_self">
+                  {% with total_qty=cart|length %}
+                    <div id="cart-qty">
+                    {% if total_qty > 0 %}
+                      {{ total_qty }}
+                    {% else %}
+                      0
+                    {% endif %}
+                    </div>
+                  {% endwith %}
+                    <i class="fas fa-shopping-cart m-1 me-md-2"></i>
+                    <p class="d-none d-md-block mb-0">My cart</p>
+                  </a>
+                {% endif %}
+                
+              </div>
+            </div>
+            <!-- Center elements -->
+
+            <!-- Right elements -->
+            <div class="col-lg-5 col-md-12 col-12">
+              <div class="input-group float-center">
+                <div class="form-outline">
+                  <input type="search" id="form1" class="form-control" />
+                  <label class="form-label" for="form1">Search</label>
+                </div>
+                <button type="button" class="btn btn-primary shadow-0">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+            <!-- Right elements -->
+          </div>
+        </div>
+      </div>
+      <!-- Jumbotron -->
+
+      <!-- Navbar -->
+      <nav
+        class="navbar navbar-expand-lg navbar-light"
+        style="background-color: #f5f5f5"
+      >
+        <!-- Container wrapper -->
+        <div
+          class="container justify-content-center justify-content-md-between"
+        >
+          <!-- Toggle button -->
+          <button
+            class="navbar-toggler border text-dark py-2"
+            type="button"
+            data-mdb-toggle="collapse"
+            data-mdb-target="#navbarLeftAlignExample"
+            aria-controls="navbarLeftAlignExample"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <i class="fas fa-bars"></i>
+          </button>
+
+          <!-- Collapsible wrapper -->
+          <div class="collapse navbar-collapse" id="navbarLeftAlignExample">
+            <!-- Left links -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link text-dark" aria-current="page" href="{% url 'store:all_products' %}"
+                  >Home</a
+                >
+              </li> 
+              <!-- Navbar dropdown -->
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle text-dark mb-0"
+                  href="#"
+                  id="navbarDropdown"
+                  role="button"
+                  data-mdb-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Library
+                </a>
+                <!-- Dropdown menu -->
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  {% for c in categories %}
+                  <li>
+                    <a class="dropdown-item" href="{{ c.get_absolute_url }}"
+                      >{{ c.name|title }}</a
+                    >
+                  </li>
+                  {% endfor %}
+                </ul>
+              </li>
+
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link text-dark" href="{% url 'account:dashboard' %}">Dashboard</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-dark" href="{% url 'account:edit_details' %}">My Details</a>
+              </li>
+              {% endif %}
+
+
+            </ul>
+            <!-- Left links -->
+          </div>
+        </div>
+        <!-- Container wrapper -->
+      </nav>
+      <!-- Navbar -->
+    </header>
+    {% block content %} {% endblock %}
+    <!-- MDB -->
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"
+    ></script>
+    <script type = "text/javascript" src= "{% static 'usercart/cart.js' %}"></script>
+  </body>
+</html>

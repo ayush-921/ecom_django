@@ -1,0 +1,148 @@
+{% extends '../store/base.html' %} 
+{% load static %} 
+{% block title %} Cart Summary {% endblock %} 
+{% block content %}
+<section class="bg-light my-5">
+  <div class="container">
+    <div class="row">
+      <!-- cart -->
+      <div class="col-lg-9">
+        <div class="card border shadow-0">
+          <div class="m-4">
+            <h4 class="card-title mb-4">Your shopping cart</h4>
+            {% for item in cart %}
+            {% with product=item.product %}
+            <div data-index="{{ product }}" class="row gy-3 mb-4 product-item">
+              <div class="col-lg-5">
+                <div class="me-lg-5">
+                  <div class="d-flex">
+                    <img src="{{ item.image }}" class="border rounded me-3" style="width: 96px; height: 96px;" />
+                    <div class="">
+                      <a href="{{ item.producturl }}" class="nav-link">{{ item.producttitle }}</a>
+                      <!--p class="text-muted">Yellow, Jeans</p-->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-2 col-sm-6 col-6 d-flex flex-row flex-lg-column flex-xl-row text-nowrap">
+                <div class="">
+                  <!--label for="select">Qty</label-->
+                  <select id = "select{{ product }}"style="width: 100px;" class="form-select me-4">
+                    <option selected>
+                      {{ item.qty }}
+                    </option>
+                    <option value="">1</option>
+                    <option value="">2</option>
+                    <option value="">3</option>
+                    <option value="">4</option>
+                  </select>
+                </div>
+                <div class="">
+                  <text class="h6" id="totprice{{product}}">₹{{ item.total_price }}</text> <br />
+                  <small class="text-muted text-nowrap" id = "price{{product}}" data-index = "{{ item.productprice }}"> ₹{{ item.productprice }} / per item </small>
+                </div>
+              </div>
+              <div class="col-lg col-sm-6 d-flex justify-content-sm-center justify-content-md-start justify-content-lg-center justify-content-xl-end mb-2">
+                <div class="float-md-end">
+                  <!--a href="#!" class="btn btn-light border px-2 icon-hover-primary"><i class="fas fa-heart fa-lg px-1 text-secondary"></i></a-->
+                  <!--a href="#" class="btn btn-light border text-danger icon-hover-danger"> Remove</a-->
+                  <button type="button" id="update-button" data-index="{{product}}"
+                  class="btn btn-light border icon-hover-danger update-button">
+                  Update
+                </button>
+                <button type="button" id="delete-button" data-index="{{product}}"
+                  class="btn btn-light border text-danger icon-hover-danger delete-button">
+                  Delete
+                </button>
+                </div>
+              </div>
+            </div>
+            {% endwith %}
+            {% endfor %}
+          </div>
+
+          <div class="border-top pt-4 mx-4 mb-4">
+            <p><i class="fas fa-truck text-muted fa-lg"></i> Free Delivery within 1-2 weeks</p>
+            <p class="text-muted">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+              aliquip
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- cart -->
+      <!-- summary -->
+      <div class="col-lg-3">
+        <div class="card shadow-0 border">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Total price:</p>
+              <p class="mb-2 subtotal">₹{{cart.get_total_price}}</p>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Total price:</p>
+              <p class="mb-2 fw-bold subtotal">₹{{cart.get_total_price}}</p>
+            </div>
+
+            <div class="mt-3">
+              <a href="#" class="btn btn-success w-100 shadow-0 mb-2"> Make Purchase </a>
+              <a href="#" class="btn btn-light w-100 border mt-2"> Back to shop </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- summary -->
+    </div>
+  </div>
+</section>
+<!-- cart + summary -->
+<script>
+  //delete btn
+  $(document).on("click", ".delete-button", function (e) {
+    e.preventDefault();
+    var prodid = $(this).data('index')
+    $.ajax({
+      type: "POST",
+      url: '{% url "cart:cart_delete" %}',
+      data: {
+        productid: $(this).data('index'),
+        csrfmiddlewaretoken: "{{ csrf_token }}",
+        action: "post",
+      },
+      success: function (json) {
+        $('.product-item[data-index="'+ prodid +'"]').remove();
+        document.getElementById("cart-qty").innerHTML = json.qty;
+        $('.subtotal').text('₹'+json.totalprice.toString());
+      },
+      error: function (xhr, errmsg, err) {},
+    });
+  });
+
+  //update button
+  $(document).on("click", ".update-button", function (e) {
+    e.preventDefault();
+    var prodid = $(this).data('index')
+    console.log('#price'+prodid)
+    var prodprice = $('#price'+prodid).data('index')
+    console.log(prodprice)
+    $.ajax({
+      type: "POST",
+      url: '{% url "cart:cart_update" %}',
+      data: {
+        productid: $(this).data('index'),
+        productqty: $('#select'+prodid+' option:selected').text(),
+        productprice: $('#price'+prodid).data('index'),
+        csrfmiddlewaretoken: "{{ csrf_token }}",
+        action: "post",
+      },
+      success: function (json) {
+        $('#totprice'+prodid).text('₹'+json.prodtotprice+'.00');
+        document.getElementById("cart-qty").innerHTML = json.qty;
+        $('.subtotal').text('₹'+json.totalprice.toString());
+      },
+      error: function (xhr, errmsg, err) {},
+    });
+  });
+</script>
+{% endblock %}

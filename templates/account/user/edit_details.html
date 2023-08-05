@@ -1,0 +1,65 @@
+{% extends '../../store/base.html' %}
+{% block title %}Edit Profile{% endblock  %}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <div class="col-md-12">
+            <div class="login d-flex align-items-center py-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 col-lg-7  mx-auto">
+                            <form class="account-form p-4 rounded col-lg-10 mx-auto" method="post" enctype="multipart/form-data">
+                                
+                                {% if user_form.is_valid %}
+                                <div class="alert alert-primary" role="alert">
+                                    Details successfully updated!
+                                </div>
+                                <p class="small text-center pt-0"><a href="{% url "account:dashboard" %}">Back to Dashboard</a></p>
+                                {% else %}
+                                <h3>Change your details</h3>
+                                <p>You can edit your account using the following form:</p>
+                                {% endif %}
+
+                                {% if form.errors %}
+                                <div class="alert alert-primary" role="alert">
+                                Error: Please try again!
+                                </div>
+                                {% endif %}
+
+                                {% csrf_token %}
+                                <label class="small font-weight-bold">{{ user_form.email.label }}</label>
+                                <p>{{ user_form.email }}</p>
+                                <label class="small font-weight-bold">{{ user_form.first_name.label }}</label>
+                                <p>{{ user_form.first_name }}</p>
+                                <label class="small font-weight-bold">{{ user_form.last_name.label }}</label>
+                                <p>{{ user_form.last_name }}</p>
+                                <label class="small font-weight-bold">{{ user_form.phone_number.label }}</label>
+                                <p>{{ user_form.phone_number }}</p>
+                                <label class="small font-weight-bold">{{ user_form.address.label }}</label>
+                                <p>{{ user_form.address }}</p>
+                                <label class="small font-weight-bold">{{ user_form.town_city.label }}</label>
+                                <p>{{ user_form.town_city }}</p>
+                                <label class="small font-weight-bold">{{ user_form.state.label }}</label>
+                                <p>{{ user_form.state }}</p>
+                                <label class="small font-weight-bold">{{ user_form.postcode.label }}</label>
+                                <p>{{ user_form.postcode }}</p>
+                                
+                                <button class="btn btn-primary btn-block py-2 mb-4 mt-5 fw-bold w-100" type="submit" value="Save changes">Save Changes</button>
+                                <hr class="mb-3">
+                            </form>
+                            <form class="account-form p-4 rounded col-lg-10 mx-auto" action="{% url 'account:delete_user' %}" method="post">
+                                {% csrf_token %}
+                                <p class="h3 pt-4 font-weight-bold">Delete Account</p>
+                                <p>Are you sure you want to delete your account?</p>
+                                <button type="submit" role="button" class="btn btn-danger btn-block py-2 mb-4 mt-5 fw-bold w-100">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+{% endblock  %}
